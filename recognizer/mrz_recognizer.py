@@ -33,8 +33,8 @@ class ImageProcessor:
                 pY = int((y + h) * 0.03)
                 (x, y) = (x - pX, y - pY)
                 (w, h) = (w + (pX * 2), h + (pY * 2))
-                roi = image[y:y + h, x:x + w]
-                return roi
+                mrz_area = image[y:y + h, x:x + w]
+                return mrz_area
 
     def _find_mrz_contours(self, image):
         """
@@ -69,10 +69,10 @@ class ImageProcessor:
         cv2.imshow('test', roi)
         cv2.waitKey(0)      
 
-    def get_mrz(self, path):
+    def get_mrz_area(self, path):
         image = cv2.imread(path)
         image = self._resize_image(image)
-        self._find_mrz_contours(image)
+        return self._find_mrz_contours(image)
 
 class DataParser:
     pass
