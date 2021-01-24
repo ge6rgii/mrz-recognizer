@@ -7,7 +7,7 @@ import cv2
 rectKernel = cv2.getStructuringElement(cv2.MORPH_RECT, (13, 5))
 sqKernel = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 21))
 
-image = cv2.imread('../dataset/NGA1.jpg')
+image = cv2.imread(path) # !!!!!!!!!!!!
 image = imutils.resize(image, height=800)
 gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
