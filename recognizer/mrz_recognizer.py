@@ -20,6 +20,7 @@ class ImageProcessor:
 
         ratio = height / width
         new_shape = maxsize, int(maxsize * ratio)
+
         return cv2.resize(image, new_shape)
 
     def _find_the_right_contour(self, cnts, image):
@@ -34,6 +35,7 @@ class ImageProcessor:
                 (x, y) = (x - pX, y - pY)
                 (w, h) = (w + (pX * 2), h + (pY * 2))
                 mrz_area = image[y:y + h, x:x + w]
+
                 return mrz_area
 
     def _find_mrz_contours(self, image):
@@ -66,8 +68,7 @@ class ImageProcessor:
         cnts = sorted(cnts, key=cv2.contourArea, reverse=True)
 
         roi = self._find_the_right_contour(cnts, image)
-        cv2.imshow('test', roi)
-        cv2.waitKey(0)      
+        return roi
 
     def get_mrz_area(self, path):
         image = cv2.imread(path)
@@ -75,4 +76,12 @@ class ImageProcessor:
         return self._find_mrz_contours(image)
 
 class DataParser:
-    pass
+    """
+    Todo: meditate on how to parse the mrz lines
+    from different countries passports.
+    """
+
+    @staticmethod
+    def _clean_the_strings(mrz_raw: list) -> list:
+        mrz_data = list(filter(lambda x: x, mrz_raw.split('<')))
+        return list(map(lambda x: x.replace('\n', '').replace('\x0c', ''), mrz_data))
