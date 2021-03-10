@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "mrz-recognizer"
+version = "0.1.0"
+description = ""
+authors = ["Georgii Bochorishvili <georgii_bochorishvili@epam.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "^1.20.1"
+opencv-python = "^4.5.1"
+imutils = "^0.5.4"
+pytesseract = "^0.3.7"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
