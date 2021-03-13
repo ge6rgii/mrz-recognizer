@@ -9,7 +9,7 @@ class ImageProcessor:
     sq_kernel   = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 21))
 
     @staticmethod
-    def _resize_image(image, maxsize=700):
+    def _resize_image(image, maxsize):
         height = image.shape[0]
         width = image.shape[1]
         if height > width:
@@ -71,7 +71,7 @@ class ImageProcessor:
 
     def get_mrz_area(self, path):
         image = cv2.imread(path)
-        image = self._resize_image(image)
+        image = self._resize_image(image, maxsize=800)
         return self._find_mrz_contours(image)
 
 
@@ -105,7 +105,13 @@ class DataParser:
         """Work in progress."""
         line_1, line_2 = self._clean_the_strings(mrz_raw)
 
+        # TODO: meditate on how to get:
+        # passport number; date of issue; date of birth; sex.
         if line_1[0] == 'P':
             country = self._get_country_name(line_1[2:5])
             name    = self._get_personal_name(line_1[5:])
             
+            return {
+                "country": country,
+                "name": name
+                }
