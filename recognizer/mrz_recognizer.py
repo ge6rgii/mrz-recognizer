@@ -87,6 +87,13 @@ class DataParser:
         return list(filter(lambda x: x, mrz_string.split('\n')))
         
 
+    @staticmethod    
+    def _get_personal_name(mrz_string: str) -> list:
+        mrz_data = list(filter(lambda x: x, mrz_string.split('<')))
+        full_name = list(map(lambda x: x.capitalize(), mrz_data))
+        return ' '.join(full_name)
+
+
     def _get_country_name(self, code: str) -> str:
         try:
             return self.countries_codes[code]
@@ -100,3 +107,5 @@ class DataParser:
 
         if line_1[0] == 'P':
             country = self._get_country_name(line_1[2:5])
+            name    = self._get_personal_name(line_1[5:])
+            
