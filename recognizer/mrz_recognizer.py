@@ -5,12 +5,11 @@ import imutils
 
 class ImageProcessor:
 
-    def __init__(self):
-        self.rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (13, 5))
-        self.sq_kernel   = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 21))
+    rect_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (13, 5))
+    sq_kernel   = cv2.getStructuringElement(cv2.MORPH_RECT, (21, 21))
 
     @staticmethod
-    def _resize_image(image, maxsize=700):
+    def _resize_image(image, maxsize):
         height = image.shape[0]
         width = image.shape[1]
         if height > width:
@@ -72,16 +71,47 @@ class ImageProcessor:
 
     def get_mrz_area(self, path):
         image = cv2.imread(path)
-        image = self._resize_image(image)
+        image = self._resize_image(image, maxsize=800)
         return self._find_mrz_contours(image)
 
+
 class DataParser:
-    """
-    Todo: meditate on how to parse the mrz lines
-    from different countries passports.
-    """
+
+    def __init__(self, countries_codes: dict) -> None:
+        self.countries_codes = countries_codes
+
 
     @staticmethod
-    def _clean_the_strings(mrz_raw: list) -> list:
-        mrz_data = list(filter(lambda x: x, mrz_raw.split('<')))
-        return list(map(lambda x: x.replace('\n', '').replace('\x0c', ''), mrz_data))
+    def _clean_the_strings(mrz_raw: str) -> list:
+        mrz_string = mrz_raw.replace(' ', '').replace('\x0c', '')
+        return list(filter(lambda x: x, mrz_string.split('\n')))
+        
+
+    @staticmethod    
+    def _get_personal_name(mrz_string: str) -> list:
+        mrz_data = list(filter(lambda x: x, mrz_string.split('<')))
+        full_name = list(map(lambda x: x.capitalize(), mrz_data))
+        return ' '.join(full_name)
+
+
+    def _get_country_name(self, code: str) -> str:
+        try:
+            return self.countries_codes[code]
+        except KeyError:
+            return ''
+
+
+    def get_data(self, mrz_raw: str) -> dict:
+        """Work in progress."""
+        line_1, line_2 = self._clean_the_strings(mrz_raw)
+
+        # TODO: meditate on how to get:
+        # passport number; date of issue; date of birth; sex.
+        if line_1[0] == 'P':
+            country = self._get_country_name(line_1[2:5])
+            name    = self._get_personal_name(line_1[5:])
+            
+            return {
+                "country": country,
+                "name": name
+                }
