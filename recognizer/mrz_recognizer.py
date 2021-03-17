@@ -136,7 +136,6 @@ class DataParser:
             "birth_date": self.birth_date
             }
 
-
     def get_data(self, mrz_raw: str) -> dict:
         """Work in progress."""
         line_1, line_2 = self._clean_the_strings(mrz_raw.upper())
