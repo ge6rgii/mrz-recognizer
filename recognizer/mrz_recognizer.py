@@ -71,7 +71,11 @@ class ImageProcessor:
 
     def get_mrz_area(self, path):
         image = cv2.imread(path)
+<<<<<<< HEAD
+        image = self._resize_image(image, maxsize=700)
+=======
         image = self._resize_image(image, maxsize=800)
+>>>>>>> 2f49807d337229f43111d8fedc235713c45457a9
         return self._find_mrz_contours(image)
 
 
@@ -80,6 +84,42 @@ class DataParser:
     def __init__(self, countries_codes: dict) -> None:
         self.countries_codes = countries_codes
 
+<<<<<<< HEAD
+    @staticmethod
+    def _clean_the_strings(mrz_raw: str) -> list:
+        mrz_string = mrz_raw.replace(' ', '').replace('\x0c', '')
+        return list(filter(lambda x: x, mrz_string.split('\n')))
+        
+    @staticmethod    
+    def _get_personal_name(mrz_string: str) -> list:
+        mrz_data = list(filter(lambda x: x, mrz_string.split('<')))
+        full_name = list(map(lambda x: x.capitalize(), mrz_data))
+        return ' '.join(full_name)
+
+    @staticmethod
+    def _get_sex(raw_string: str) -> str:
+        if raw_string == 'M':
+            return 'Male'
+        return 'Female'
+
+    @staticmethod
+    def _birth_date_parser(date_string: str) -> str:
+        year = date_string[:2]
+        month = date_string[2:4]
+        day = date_string[4:6]
+
+        if int(year) < 21:
+            year = '20' + year
+        else:
+            year = '19' + year
+        
+        date_string = '.'.join([day, month, year])
+        return date_string
+
+    def _check_country_code(self):
+        if self.country_code == 'D<<':
+            self.country_code = 'DEU'
+=======
 
     @staticmethod
     def _clean_the_strings(mrz_raw: str) -> list:
@@ -93,6 +133,7 @@ class DataParser:
         full_name = list(map(lambda x: x.capitalize(), mrz_data))
         return ' '.join(full_name)
 
+>>>>>>> 2f49807d337229f43111d8fedc235713c45457a9
 
     def _get_country_name(self, code: str) -> str:
         try:
@@ -100,6 +141,36 @@ class DataParser:
         except KeyError:
             return ''
 
+<<<<<<< HEAD
+    def _get_personal_data(self, line_1: str, line_2: str) -> dict:
+        self.country_code = line_1[2:5]
+        pass_num, personal_data = line_2.split(self.country_code)
+        self._check_country_code()
+
+        self.pass_num     = pass_num[:-1].replace('<', '')
+        self.sex          = self._get_sex(personal_data[7:8])
+        self.birth_date   = self._birth_date_parser(personal_data[:6])
+        self.country      = self._get_country_name(self.country_code)
+        self.name         = self._get_personal_name(line_1[5:])
+
+        return {
+            "country_code": self.country_code,
+            "country": self.country,
+            "name": self.name,
+            "pass_num": self.pass_num,
+            "sex": self.sex,
+            "birth_date": self.birth_date
+            }
+
+    def get_data(self, mrz_raw: str) -> dict:
+        """Work in progress."""
+        line_1, line_2 = self._clean_the_strings(mrz_raw.upper())
+
+        # TODO: meditate on how to:
+        # get date of issue; split names and surnames.
+        if line_1[0] == 'P':
+            return self._get_personal_data(line_1, line_2)
+=======
 
     def get_data(self, mrz_raw: str) -> dict:
         """Work in progress."""
@@ -115,3 +186,4 @@ class DataParser:
                 "country": country,
                 "name": name
                 }
+>>>>>>> 2f49807d337229f43111d8fedc235713c45457a9
