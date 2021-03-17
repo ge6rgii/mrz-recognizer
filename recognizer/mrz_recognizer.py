@@ -71,7 +71,11 @@ class ImageProcessor:
 
     def get_mrz_area(self, path):
         image = cv2.imread(path)
+<<<<<<< HEAD
         image = self._resize_image(image, maxsize=700)
+=======
+        image = self._resize_image(image, maxsize=800)
+>>>>>>> 2f49807d337229f43111d8fedc235713c45457a9
         return self._find_mrz_contours(image)
 
 
@@ -80,6 +84,7 @@ class DataParser:
     def __init__(self, countries_codes: dict) -> None:
         self.countries_codes = countries_codes
 
+<<<<<<< HEAD
     @staticmethod
     def _clean_the_strings(mrz_raw: str) -> list:
         mrz_string = mrz_raw.replace(' ', '').replace('\x0c', '')
@@ -114,6 +119,21 @@ class DataParser:
     def _check_country_code(self):
         if self.country_code == 'D<<':
             self.country_code = 'DEU'
+=======
+
+    @staticmethod
+    def _clean_the_strings(mrz_raw: str) -> list:
+        mrz_string = mrz_raw.replace(' ', '').replace('\x0c', '')
+        return list(filter(lambda x: x, mrz_string.split('\n')))
+        
+
+    @staticmethod    
+    def _get_personal_name(mrz_string: str) -> list:
+        mrz_data = list(filter(lambda x: x, mrz_string.split('<')))
+        full_name = list(map(lambda x: x.capitalize(), mrz_data))
+        return ' '.join(full_name)
+
+>>>>>>> 2f49807d337229f43111d8fedc235713c45457a9
 
     def _get_country_name(self, code: str) -> str:
         try:
@@ -121,6 +141,7 @@ class DataParser:
         except KeyError:
             return ''
 
+<<<<<<< HEAD
     def _get_personal_data(self, line_1: str, line_2: str) -> dict:
         self.country_code = line_1[2:5]
         pass_num, personal_data = line_2.split(self.country_code)
@@ -149,3 +170,20 @@ class DataParser:
         # get date of issue; split names and surnames.
         if line_1[0] == 'P':
             return self._get_personal_data(line_1, line_2)
+=======
+
+    def get_data(self, mrz_raw: str) -> dict:
+        """Work in progress."""
+        line_1, line_2 = self._clean_the_strings(mrz_raw)
+
+        # TODO: meditate on how to get:
+        # passport number; date of issue; date of birth; sex.
+        if line_1[0] == 'P':
+            country = self._get_country_name(line_1[2:5])
+            name    = self._get_personal_name(line_1[5:])
+            
+            return {
+                "country": country,
+                "name": name
+                }
+>>>>>>> 2f49807d337229f43111d8fedc235713c45457a9
