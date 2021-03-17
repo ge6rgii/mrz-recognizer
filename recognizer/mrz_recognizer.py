@@ -111,6 +111,10 @@ class DataParser:
         date_string = '.'.join([day, month, year])
         return date_string
 
+    def _check_country_code(self):
+        if self.country_code == 'D<<':
+            self.country_code = 'DEU'
+
     def _get_country_name(self, code: str) -> str:
         try:
             return self.countries_codes[code]
@@ -120,6 +124,7 @@ class DataParser:
     def _get_personal_data(self, line_1: str, line_2: str) -> dict:
         self.country_code = line_1[2:5]
         pass_num, personal_data = line_2.split(self.country_code)
+        self._check_country_code()
 
         self.pass_num     = pass_num[:-1].replace('<', '')
         self.sex          = self._get_sex(personal_data[7:8])
